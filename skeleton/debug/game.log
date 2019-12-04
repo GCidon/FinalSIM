@@ -1,0 +1,3 @@
+﻿  Player.cpp
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\include\xmemory(1373,1): warning C4626:  'std::_Basic_container_proxy_ptr12': el operador de asignaciones se definió implícitamente como eliminado
+  game.vcxproj -> C:\Users\mxddx\Desktop\ProyectoSIM\FinalSIM\skeleton\../bin/gameDEBUG.exe
