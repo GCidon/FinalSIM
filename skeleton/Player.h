@@ -2,12 +2,13 @@
 
 #include "Particle.h"
 #include "ParticleLink.h"
+#include "Shooter.h"
 
 class Player
 {
 protected:
 	Particle* body;
-	Particle* shooter;
+	Shooter* shooter;
 	ParticleCable* cable;
 	ParticleContact* contact;
 
@@ -16,7 +17,7 @@ public:
 	~Player();
 
 	Particle* getBody();
-	Particle* getShooter();
+	Shooter* getShooter();
 	ParticleCable* getCable();
 	ParticleContact* getContact();
 

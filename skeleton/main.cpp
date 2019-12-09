@@ -9,9 +9,12 @@
 #include "Particle.h"
 #include "Player.h"
 #include "EnemyGenerator.h"
+#include "Firework.h"
 #include <vector>
 #include "callbacks.hpp"
+#include <iostream>
 
+using namespace std;
 using namespace physx;
 
 PxDefaultAllocator		gAllocator;
@@ -35,7 +38,10 @@ Player* player = NULL;
 
 EnemyGenerator* gen = NULL;
 
-vector<Particle*> enemies;
+vector<Enemy*> enemies;
+vector<Particle*> bullets;
+vector<Particle*> enemBullets;
+vector<Firework*> fireworks;
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -81,8 +87,27 @@ void stepPhysics(bool interactive, double t)
 		player->getContact()->resolve(t);
 
 	player->getShooter()->integrate(t);
+	player->getShooter()->generate(t, bullets);
 	gen->generate(t, enemies);
-	for (auto obj : enemies) obj->integrate(t);
+	for (auto bul : bullets) {
+		bul->integrate(t);
+	}
+	for (auto obj : enemies) {
+		obj->integrate(t);
+		obj->update(t);
+		for (auto bul : obj->v_) bul->integrate(t);
+		for (auto bul : bullets) {
+			if ((bul->getPosition() - obj->getPosition()).normalize() < 2) {
+				cout << "Hit";
+				Firework* newFire = new Firework(CreateShape(PxSphereGeometry(0.2)), obj->getPosition(), 0);
+				fireworks.push_back(newFire);
+				newFire->explode();
+				//delete obj;
+			}
+		}
+	}
+	for (auto obj : fireworks) obj->update(t);
+
 
 	gScene->simulate(t);
 	gScene->fetchResults(true);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Particle.h"
+#include "Enemy.h"
 
 class EnemyGenerator
 {
@@ -13,6 +13,6 @@ private:
 public:
 	EnemyGenerator(Vector3 initPos, float period, float tam);
 
-	void generate(float t, vector<Particle*>& v);
+	void generate(float t, vector<Enemy*>& v);
 };
 

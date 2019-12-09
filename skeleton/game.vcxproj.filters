@@ -15,6 +15,10 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ParticleContact.cpp" />
     <ClCompile Include="ParticleLink.cpp" />
+    <ClCompile Include="Shooter.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="ParticleSpring.cpp" />
+    <ClCompile Include="Firework.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -31,6 +35,10 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="ParticleContact.h" />
     <ClInclude Include="ParticleLink.h" />
+    <ClInclude Include="Shooter.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="ParticleSpring.h" />
+    <ClInclude Include="Firework.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

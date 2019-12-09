@@ -2,9 +2,9 @@
 
 Player::Player() {
 	body = new Particle(CreateShape(PxSphereGeometry(2)), Vector3(0, 5, 0), 0, Vector4(0, 0, 255, 0));
-	shooter = new Particle(CreateShape(PxBoxGeometry(2, 2, 2)), Vector3(0, 0, 0), 0, Vector4(0, 255, 0, 0));
+	shooter = new Shooter(0.5, Vector3(0,0,0), 30);
 	shooter->setAcceleration(Vector3(0, -9.8, 0.0));
-	cable = new ParticleCable(body, shooter, 20, 0.5);
+	cable = new ParticleCable(body, shooter, 5, 0.5);
 	contact = new ParticleContact(body, shooter, 0.5);
 }
 
@@ -12,7 +12,7 @@ Particle* Player::getBody() {
 	return body;
 }
 
-Particle* Player::getShooter() {
+Shooter* Player::getShooter() {
 	return shooter;
 }
 

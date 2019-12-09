@@ -44,7 +44,6 @@ void ParticleContact::resolveVelocity(float t) {
 	// Compute impulse for each particle
 	Vector3 impulsoVec = contactNormal * impulso;
 	// Set new velocity for each particle
-	particle[0]->setVelocity(particle[0]->getVelocity() + impulsoVec * particle[0]->getInverseMass());
 	particle[1]->setVelocity(particle[1]->getVelocity() + impulsoVec * -particle[1]->getInverseMass());
 
 }
@@ -57,7 +56,6 @@ void ParticleContact::resolveInterpenetration(float t) {
 		// Calculate the movement for each particle
 		Vector3 movement = contactNormal * (-penetration / totalMass);
 		// Apply movement to the position of each particle
-		particle[0]->setPosition(particle[0]->getPosition() + movement * particle[0]->getInverseMass());
 		particle[1]->setPosition(particle[1]->getPosition() + movement * particle[1]->getInverseMass());
 	}
 }
