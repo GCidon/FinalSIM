@@ -27,7 +27,10 @@ void Firework::explode() {
 	for (int i = 0; i < cant; i++) {
 		Vector3 ini = p;
 		PxTransform* transform = new PxTransform(ini);
-		Particle* p = new Particle(pShape, ini, 0, Vector4(0,255,0,0));
+		Vector4 color;
+		if (type_ == 0) color = Vector4(255, 0, 0, 0);
+		else color = Vector4(0, 255, 0, 0);
+		Particle* p = new Particle(pShape, ini, 0, color);
 		if(type_ == 2)
 			p->setVelocity(Vector3(rand() % 100 - 50, 50, rand() % 100 - 50));
 		else if(type_ == 1)
@@ -47,11 +50,18 @@ void Firework::update(float t) {
 			explode();
 		}
 	}
-	for each (auto shot in particulas) {
-		shot->integrate(t);
-		if (shot->getLifespan() >= 3) {
-			delete shot;
-			shot = nullptr;
+	auto shot = particulas.begin();
+	while (!particulas.empty() && shot != particulas.end()) {
+		bool deleted = false;
+		Particle* aux = *shot;
+		aux->integrate(t);
+		if (aux->getLifespan() > 3) {
+			particulas.erase(shot);
+			delete aux;
+			shot = particulas.begin();
+			deleted = true;
 		}
+		if (!particulas.empty() && !deleted)
+			shot++;
 	}
 }

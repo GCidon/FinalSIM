@@ -19,6 +19,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="ParticleSpring.cpp" />
     <ClCompile Include="Firework.cpp" />
+    <ClCompile Include="Bomb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="ParticleSpring.h" />
     <ClInclude Include="Firework.h" />
+    <ClInclude Include="Bomb.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

@@ -15,7 +15,9 @@ public:
 class BaseEnemy : public Enemy 
 {
 public:
-	BaseEnemy(Vector3 pos) : Enemy(pos) {}
+	BaseEnemy(Vector3 pos) : Enemy(pos) {
+		setVelocity(Vector3(0, -50, 0));
+	}
 	virtual void update(float t) {}
 };
 

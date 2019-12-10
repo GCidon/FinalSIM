@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "EnemyGenerator.h"
 #include "Firework.h"
+#include "Bomb.h"
 #include <vector>
 #include "callbacks.hpp"
 #include <iostream>
@@ -42,6 +43,7 @@ vector<Enemy*> enemies;
 vector<Particle*> bullets;
 vector<Particle*> enemBullets;
 vector<Firework*> fireworks;
+vector<Bomb*> bombs;
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -62,7 +64,7 @@ void initPhysics(bool interactive)
 
 	player = new Player();
 
-	gen = new EnemyGenerator(Vector3(0, 50, 0), 2, 25);
+	gen = new EnemyGenerator(Vector3(0, 50, 0), 0.75, 25);
 
 	// For Solid Rigids +++++++++++++++++++++++++++++++++++++
 	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
@@ -88,24 +90,74 @@ void stepPhysics(bool interactive, double t)
 
 	player->getShooter()->integrate(t);
 	player->getShooter()->generate(t, bullets);
+
 	gen->generate(t, enemies);
-	for (auto bul : bullets) {
-		bul->integrate(t);
-	}
-	for (auto obj : enemies) {
-		obj->integrate(t);
-		obj->update(t);
-		for (auto bul : obj->v_) bul->integrate(t);
-		for (auto bul : bullets) {
-			if ((bul->getPosition() - obj->getPosition()).normalize() < 2) {
-				cout << "Hit";
-				Firework* newFire = new Firework(CreateShape(PxSphereGeometry(0.2)), obj->getPosition(), 0);
+	for (auto bul : bullets) bul->integrate(t);
+	for (auto bomb : bombs) bomb->update(t, enemies);
+
+	auto obj = enemies.begin();
+	while (obj!= enemies.end() && !enemies.empty()) {
+		Enemy* aux = *obj;
+
+		aux->integrate(t);
+		aux->update(t);
+
+		if ((player->getBody()->getPosition() - aux->getPosition()).normalize() < 4) {
+			Firework* newFire = new Firework(CreateShape(PxSphereGeometry(0.2)), player->getBody()->getPosition(), 0);
+			fireworks.push_back(newFire);
+			newFire->explode();
+
+			player->getBody()->setPosition(Vector3(0, 0, 0));
+			player->getShooter()->setPosition(Vector3(0, 0, 0));
+		}
+
+		for (auto bul : aux->v_) {
+			bul->integrate(t);
+			if ((player->getBody()->getPosition() - bul->getPosition()).normalize() < 2) {
+				Firework* newFire = new Firework(CreateShape(PxSphereGeometry(0.2)), player->getBody()->getPosition(), 0);
 				fireworks.push_back(newFire);
 				newFire->explode();
-				//delete obj;
+
+				player->getBody()->setPosition(Vector3(0, 0, 0));
+				player->getShooter()->setPosition(Vector3(0, 0, 0));
 			}
 		}
+
+		int i = 0;
+		bool deleted = false;
+		while (i < bullets.size() && !deleted) {
+			auto bul = bullets[i];
+			if ((bul->getPosition() - aux->getPosition()).normalize() < 2) {
+				Firework* newFire = new Firework(CreateShape(PxSphereGeometry(0.2)), aux->getPosition(), 2);
+				fireworks.push_back(newFire);
+				newFire->explode();
+
+				for (auto enemBul : aux->v_) delete enemBul;
+
+				enemies.erase(obj);
+				delete aux;
+				obj = enemies.begin();
+				deleted = true;
+
+				
+			}
+			i++;
+		}
+
+		if (!deleted && (aux->getPosition().y < -10 || aux->getPosition().z < -30 || aux->getPosition().z > 30)) {
+			for (auto enemBul : aux->v_) delete enemBul;
+			enemies.erase(obj);
+			delete aux;
+			obj = enemies.begin();
+			deleted = true;
+		}
+
+
+		if (!enemies.empty() && !deleted)
+			obj++;
+
 	}
+
 	for (auto obj : fireworks) obj->update(t);
 
 
@@ -131,6 +183,11 @@ void cleanupPhysics(bool interactive)
 	gFoundation->release();
 }
 
+void throwBomb() {
+	Bomb* b = new Bomb(player->getBody()->getPosition(), 1);
+	bombs.push_back(b);
+}
+
 // Function called when a key is pressed
 void keyPress(unsigned char key, const PxTransform& camera)
 {
@@ -138,34 +195,37 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	switch(toupper(key))
 	{
-	//case 'B': break;
-	//case ' ':	break;
-	case 'I':
-	{
-		if (player->getBody()->getPosition().y < 25)
-			player->getBody()->setPosition(player->getBody()->getPosition() + Vector3(0, 1, 0));
-		break;
-	}
-	case 'K':
-	{
-		if (player->getBody()->getPosition().y > 0)
-			player->getBody()->setPosition(player->getBody()->getPosition() + Vector3(0, -1, 0));
-		break;
-	}
-	case 'J':
-	{
-		if(player->getBody()->getPosition().z > -25)
-			player->getBody()->setPosition(player->getBody()->getPosition() + Vector3(0, 0, -1));
-		break;
-	}
-	case 'L':
-	{
-		if(player->getBody()->getPosition().z < 25)
-			player->getBody()->setPosition(player->getBody()->getPosition() + Vector3(0, 0, 1));
-		break;
-	}
-	default:
-		break;
+		case 'I':
+		{
+			if (player->getBody()->getPosition().y < 25)
+				player->getBody()->setPosition(player->getBody()->getPosition() + Vector3(0, 1, 0));
+			break;
+		}
+		case 'K':
+		{
+			if (player->getBody()->getPosition().y > 0)
+				player->getBody()->setPosition(player->getBody()->getPosition() + Vector3(0, -1, 0));
+			break;
+		}
+		case 'J':
+		{
+			if(player->getBody()->getPosition().z > -25)
+				player->getBody()->setPosition(player->getBody()->getPosition() + Vector3(0, 0, -1));
+			break;
+		}
+		case 'L':
+		{
+			if(player->getBody()->getPosition().z < 25)
+				player->getBody()->setPosition(player->getBody()->getPosition() + Vector3(0, 0, 1));
+			break;
+		}
+		case 'B':
+		{
+			throwBomb();
+			break;
+		}
+		default:
+			break;
 	}
 }
 

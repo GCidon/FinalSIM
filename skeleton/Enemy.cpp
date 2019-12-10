@@ -19,7 +19,7 @@ void ShootingEnemy::update(float t) {
 }
 
 SpringEnemy::SpringEnemy(Vector3 pos) : Enemy(pos) {
-	center_ = new Particle(CreateShape(PxSphereGeometry(0.05)), pos+Vector3(0,0,5), 0, Vector4(255, 0, 0, 0));
+	center_ = new Particle(CreateShape(PxSphereGeometry(0.05)), pos+Vector3(0,0,5), 0, Vector4(0, 0, 0, 0));
 	center_->setVelocity(Vector3(0,-10,0));
 	spring_ = new ParticleSpring(center_, 50.0, 0);
 }

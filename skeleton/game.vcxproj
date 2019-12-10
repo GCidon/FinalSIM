@@ -253,6 +253,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyGenerator.cpp" />
@@ -269,6 +270,7 @@
     <ClCompile Include="Shooter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bomb.h" />
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="core.hpp" />
     <ClInclude Include="Enemy.h" />
